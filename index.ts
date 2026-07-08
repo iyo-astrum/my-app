@@ -31,15 +31,17 @@ app.get("/", async (req, res) => {
 
 app.post("/users", async (req, res) => {
   const name = req.body.name;
+  const age = Number(req.body.age); // 年齢を受け取る
   if (name && connectionString) {
     try {
-      await prisma.user.create({ data: { name } });
+      await prisma.user.create({ data: { name, age } }); // age も保存
     } catch (e) {
       console.error("追加失敗:", e);
     }
   }
   res.redirect("/");
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
