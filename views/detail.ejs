@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>取引の詳細</title>
+    <style>
+        body { font-family: sans-serif; max-width: 500px; margin: 40px auto; padding: 20px; line-height: 1.8; }
+        .detail-box { border: 1px solid #ddd; padding: 20px; border-radius: 8px; background: #fafafa; }
+        .label { font-weight: bold; color: #666; font-size: 0.9em; }
+        .value { font-size: 1.2em; margin-bottom: 15px; border-bottom: 1px solid #eee; }
+        .back-link { display: inline-block; margin-top: 20px; text-decoration: none; color: #2196f3; }
+        .income { color: #2e7d32; font-weight: bold; }
+        .expense { color: #c62828; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>取引の詳細</h1>
+
+    <div class="detail-box">
+        <div class="label">日時</div>
+        <div class="value"><%= new Date(transaction.date).toLocaleDateString('ja-JP') %></div>
+
+        <div class="label">区分</div>
+        <div class="value <%= transaction.type %>">
+            <%= transaction.type === 'income' ? '収入 (+)' : '支出 (-)' %>
+        </div>
+
+        <div class="label">金額</div>
+        <div class="value">¥ <%= transaction.amount.toLocaleString() %></div>
+
+        <div class="label">カテゴリ</div>
+        <div class="value"><%= transaction.category %></div>
+
+        <div class="label">詳細メモ</div>
+        <div class="value"><%= transaction.memo || '（メモなし）' %></div>
+
+        <div class="label">登録日時</div>
+        <div class="value" style="font-size: 0.8em; color: #999;">
+            <%= new Date(transaction.createdAt).toLocaleString('ja-JP') %>
+        </div>
+    </div>
+
+    <a href="/" class="back-link">← 一覧に戻る</a>
+</body>
+</html>

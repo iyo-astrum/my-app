@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../generated/prisma"
@@ -19,25 +17,13 @@ model Transaction {
   date        DateTime // 収支が発生した日付
   amount      Int      // 額面
   category    String   // 経費の区分（「食費」「交通費」など）
-  memo        String?  // 詳細（メモ。?は空でもOKの意味）
-  receiptUrl  String?  // 証憑画像の保存先（MVPでは将来用）
+  memo        String?  // 詳細（メモ）
+  receiptUrl  String?  // 証憑画像の保存先
   createdAt   DateTime @default(now()) // 登録日時
 }
 
+// カテゴリを管理するためのモデル
 model Category {
   id   Int    @id @default(autoincrement())
   name String @unique
-}
-
-// 既存の Transaction はそのままじゃが、
-// category 項目が String であることは変わらぬのでそのままで大丈夫じゃ。
-model Transaction {
-  id          Int      @id @default(autoincrement())
-  type        String
-  date        DateTime
-  amount      Int
-  category    String   // ここに Category の name を入れるようにするぞ
-  memo        String?
-  receiptUrl  String?
-  createdAt   DateTime @default(now())
 }
