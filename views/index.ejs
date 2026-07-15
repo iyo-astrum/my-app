@@ -1,17 +1,83 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head><meta charset="UTF-8"><title>ユーザー一覧</title></head>
+<head>
+    <meta charset="UTF-8">
+    <title>わしの収支アプリ</title>
+    <style>
+        body { font-family: sans-serif; max-width: 600px; margin: 20px auto; padding: 0 10px; }
+        .balance-box { background: #f0f4f8; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
+        .balance-amount { font-size: 2em; font-weight: bold; color: #2c3e50; }
+        form { background: #fff; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 10px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; }
+        button { width: 100%; padding: 10px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #2980b9; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border-bottom: 1px solid #ddd; padding: 10px; text-align: left; }
+        .income { color: #27ae60; }
+        .expense { color: #e74c3c; }
+    </style>
+</head>
 <body>
-  <h1>ユーザー一覧（本番DB接続待ち）</h1>
-  <ul>
-    <% users.forEach(user => { %>
-      <li><%= user.name %> (<%= user.age || '秘密' %>歳)</li>
-    <% }) %>
-  </ul>
-  <form action="/users" method="post">
-    <input type="text" name="name" placeholder="名前" required>
-    <input type="number" name="age" placeholder="年齢">
-    <button type="submit">追加</button>
-  </form>
+    <h1>収支管理</h1>
+
+    <!-- 現在の所持金（残高）を表示 -->
+    <div class="balance-box">
+        <div>現在の所持金</div>
+        <div class="balance-amount">¥ <%= balance.toLocaleString() %></div>
+    </div>
+
+    <!-- 入力フォーム -->
+    <form action="/transactions" method="post">
+        <div class="form-group">
+            <label>収支区分</label>
+            <select name="type">
+                <option value="expense">支出 (-)</option>
+                <option value="income">収入 (+)</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>日付</label>
+            <input type="date" name="date" required value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group">
+            <label>金額 (円)</label>
+            <input type="number" name="amount" placeholder="1000" required>
+        </div>
+        <div class="form-group">
+            <label>カテゴリ</label>
+            <input type="text" name="category" placeholder="食費、給与など" required>
+        </div>
+        <div class="form-group">
+            <label>詳細メモ</label>
+            <textarea name="memo" rows="2" placeholder="おにぎり、お茶など"></textarea>
+        </div>
+        <button type="submit">記録する</button>
+    </form>
+
+    <!-- 直近の収支一覧 -->
+    <h2>直近の履歴</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>カテゴリ</th>
+                <th>金額</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% transactions.forEach(t => { %>
+                <tr>
+                    <td><%= new Date(t.date).toLocaleDateString('ja-JP') %></td>
+                    <td><%= t.category %></td>
+                    <td class="<%= t.type %>">
+                        <%= t.type === 'income' ? '+' : '-' %> ¥ <%= t.amount.toLocaleString() %>
+                    </td>
+                </tr>
+            <% }) %>
+        </tbody>
+    </table>
 </body>
 </html>
+

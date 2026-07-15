@@ -12,8 +12,14 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id   Int    @id @default(autoincrement())
-  name String
-  age  Int?
+// 収支を記録するためのモデル
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  type        String   // "income" (収入) か "expense" (支出)
+  date        DateTime // 収支が発生した日付
+  amount      Int      // 額面
+  category    String   // 経費の区分（「食費」「交通費」など）
+  memo        String?  // 詳細（メモ。?は空でもOKの意味）
+  receiptUrl  String?  // 証憑画像の保存先（MVPでは将来用）
+  createdAt   DateTime @default(now()) // 登録日時
 }
