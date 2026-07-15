@@ -23,3 +23,21 @@ model Transaction {
   receiptUrl  String?  // 証憑画像の保存先（MVPでは将来用）
   createdAt   DateTime @default(now()) // 登録日時
 }
+
+model Category {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+}
+
+// 既存の Transaction はそのままじゃが、
+// category 項目が String であることは変わらぬのでそのままで大丈夫じゃ。
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  type        String
+  date        DateTime
+  amount      Int
+  category    String   // ここに Category の name を入れるようにするぞ
+  memo        String?
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+}

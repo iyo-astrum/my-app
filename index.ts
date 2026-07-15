@@ -23,41 +23,46 @@ app.set("view engine", "ejs");
 app.set("views", "./views");
 app.use(express.urlencoded({ extended: true }));
 
-// メイン画面：収支一覧と残高の表示
+// app.get("/") の中身を少し書き換える
 app.get("/", async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany({
       orderBy: { date: "desc" },
     });
 
+    // データベースからカテゴリ一覧を取得する
+    let categories = await prisma.category.findMany();
+
+    // もしカテゴリが一つもなければ、初期値をいくつか入れておく（親切設計じゃ）
+    if (categories.length === 0) {
+      await prisma.category.createMany({
+        data: [
+          { name: "食費" }, { name: "交通費" }, { name: "給与" }
+        ]
+      });
+      categories = await prisma.category.findMany();
+    }
+
     const balance = transactions.reduce((sum, t) => {
       return t.type === "income" ? sum + t.amount : sum - t.amount;
     }, 0);
 
-    res.render("index", { transactions, balance });
+    res.render("index", { transactions, balance, categories });
   } catch (error) {
-    console.error("データ取得エラー:", error);
-    res.status(500).send("エラーが発生しました。");
+    console.error(error);
+    res.status(500).send("エラー");
   }
 });
 
-// 収支データの追加
-app.post("/transactions", async (req, res) => {
-  const { type, date, amount, category, memo } = req.body;
-  
-  if (type && date && amount) {
-    await prisma.transaction.create({
-      data: {
-        type,
-        date: new Date(date),
-        amount: parseInt(amount),
-        category,
-        memo,
-      },
-    });
+// カテゴリを追加するためのルートも作っておこう
+app.post("/categories", async (req, res) => {
+  const { name } = req.body;
+  if (name) {
+    await prisma.category.create({ data: { name } });
   }
   res.redirect("/");
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

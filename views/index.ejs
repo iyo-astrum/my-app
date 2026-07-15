@@ -47,15 +47,21 @@
         </div>
         <div class="form-group">
             <label>カテゴリ</label>
+            <!-- カテゴリのセレクトボックス部分 -->
             <select name="category" required>
-                <option value="" disabled selected>選択してください</option>
-                <option value="食費">食費</option>
-                <option value="交通費">交通費</option>
-                <option value="日用品">日用品</option>
-                <option value="娯楽">娯楽</option>
-                <option value="給与">給与</option>
-                <option value="その他">その他</option>
+            <option value="" disabled selected>選択してください</option>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat.name %>"><%= cat.name %></option>
+            <% }) %>
             </select>
+
+            <hr>
+            <!-- カテゴリを増やすための小さなフォームも追加しておこう -->
+            <h3>カテゴリ追加</h3>
+            <form action="/categories" method="post" style="display: flex; gap: 5px;">
+              <input type="text" name="name" placeholder="新しいカテゴリ名" required style="flex: 1;">
+              <button type="submit" style="width: auto;">追加</button>
+            </form>
         </div>
         <div class="form-group">
             <label>詳細メモ</label>
